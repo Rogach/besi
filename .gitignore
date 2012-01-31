@@ -1,0 +1,4 @@
+target/
+.bzr/
+.bzrignore
+scala-mode*

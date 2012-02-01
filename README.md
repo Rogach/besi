@@ -6,6 +6,7 @@ BESI - Better Emacs-Scala Indentation
 Installation
 ============
 
+* Make sure you have scala-mode installed.
 * Add file besi.el to your load path
 * Add this line to start of scala-mode.el:
 

@@ -37,7 +37,10 @@
 (defun besi-newline ()
   (interactive)
   (progn  
-    (if (/= (point) 1)
+    (if 
+      (save-excursion
+        (skip-syntax-backward "-w_.")
+        (/= (point) 1))
       (if (besi-is-char-before "{")
         (besi-insert-matching-brace "}")
         (if (besi-is-char-before "(")

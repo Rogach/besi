@@ -3,7 +3,7 @@ BESI
 
 BESI - Better Emacs-Scala Indentation
 
-With this mode installed, Emacs would indent all lines at the level, equal to the previous line, or two spaces to the right, if previous line ended with "{", "=", ">", "(". Also, it would add matching brace, if you press enter after "(", "{" or "{ var_name => ".
+With this mode installed, Emacs would indent all lines at the level equal to the previous line, or two spaces to the right, if previous line ended with "{", "=", ">", "(". Also, it would add matching brace, if you press enter after "(", "{" or "{ var_name => ".
 
 Example of indentation:
 
@@ -26,9 +26,13 @@ Installation
   
 * Edit the line in scala-mode.el
 
+    ```indent-line-function 'scala-indent-line```
+
     ```indent-line-function          'besi-indent-line```
   
 * Edit the line in scala-mode-ui.el
+
+    ```("\r"                       'scala-newline)```
 
     ```("\r"                       'besi-newline)```
   

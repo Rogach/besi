@@ -2,3 +2,5 @@ target/
 .bzr/
 .bzrignore
 scala-mode*
+besi-notes.txt
+textindent.el

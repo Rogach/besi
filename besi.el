@@ -3,13 +3,29 @@
 (defun besi-indent-line ()
   "Indent current line"
   (interactive)
-  (scala-indent-line-to (besi-indent)))
+  (indent-line-to (besi-indent)))
 
 (defun besi-indent ()
   (save-excursion
     (forward-comment -100000)
     (backward-char 1)
-    (if (or (looking-at "{") (looking-at "=") (looking-at ">") (looking-at "("))
+    (if (or 
+          (looking-at "{")
+          (looking-at "=") 
+          (save-excursion
+            (if (looking-at ">")
+               (progn
+                 (backward-char 1)
+                 (if (looking-at "=")
+                   1
+                   (if (looking-at "/") nil 
+                     (progn 
+                       (back-to-indentation)
+                       (if (looking-at "</")
+                          nil 1))
+                     )))
+               nil))
+          (looking-at "("))
       (+ (current-indentation) 2)
       (current-indentation))))
 
@@ -18,7 +34,7 @@
       (newline)
       (insert brace)
       (backward-char 1)
-      (scala-indent-line-to (- (besi-indent) 2))))
+      (indent-line-to (- (besi-indent) 2))))
 
 (defun besi-is-char-after (char)
   (save-excursion
@@ -70,3 +86,24 @@
           (besi-insert-matching-brace)
              )))
     (newline-and-indent)))
+
+(defun besi-insert-match (pre aft)
+  (progn
+    (insert pre)
+    (insert aft)
+    (backward-char 1)))
+
+
+(add-hook 'scala-mode-hook
+  (lambda () 
+    (progn
+      (setq indent-line-function 'besi-indent-line)
+      (local-set-key (kbd "RET") 'besi-newline)
+      (local-set-key (kbd "\"") 
+        (lambda () (interactive) 
+          (insert-match "\"" "\"")))
+      (local-set-key (kbd "'") 
+        (lambda () (interactive) 
+          (insert-match "'" "'"))))))
+
+

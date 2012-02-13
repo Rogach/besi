@@ -3,7 +3,10 @@
 (defun besi-indent-line ()
   "Indent current line"
   (interactive)
-  (indent-line-to (besi-indent)))
+  (indent-line-to 
+    (if (eq last-command this-command)
+      (+ 2 (current-indentation))
+      (besi-indent))))
 
 (defun besi-indent ()
   (save-excursion

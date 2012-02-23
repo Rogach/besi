@@ -4,9 +4,13 @@
   "Indent current line"
   (interactive)
   (indent-line-to 
-    (if (eq last-command this-command)
+    (if (or 
+          (eq last-command 'besi-indent-line)
+          (eq last-command 'indent-for-tab-command))
       (+ 2 (current-indentation))
-      (besi-indent))))
+      (besi-indent)))
+  (setq last-command 'besi-indent-line)
+)
 
 (defun besi-indent ()
   (save-excursion
@@ -46,9 +50,13 @@
 
 (defun besi-is-char-before (char)
   (save-excursion
+    (forward-comment -100000)
     (skip-syntax-backward "-w_.")
-    (backward-char 1)
-    (looking-at char)))       
+    (if (> (point) 1)
+      (progn
+        (backward-char 1)
+        (looking-at char))
+      nil)))
 
 (defun besi-insert-matching-brace ()
   (if (besi-is-char-before "{")
@@ -71,24 +79,23 @@
   (progn  
     (if 
       (save-excursion
+        (forward-comment -100000)
         (skip-syntax-backward "-w_.")
         (/= (point) 1))
-      (if 
-        (>= 
-          (current-indentation)
-          (save-excursion
-            (forward-comment 100000)
-            (current-indentation)))
-        (if 
-          (= 
-            (current-indentation)
-            (save-excursion
-              (forward-comment 100000)
-              (current-indentation)))
-          (besi-insert-matching-brace-and-check)
+      (let (
+            (next-indent
+             (save-excursion
+               (forward-comment 100000)
+               (current-indentation)))
+            (prev-indent
+             (save-excursion
+               (forward-comment -100000)
+               (current-indentation))))
+        (if (< next-indent prev-indent)
           (besi-insert-matching-brace)
-             )))
-    (newline-and-indent)))
+          (if (= next-indent prev-indent)
+            (besi-insert-matching-brace-and-check)))))
+    (progn (insert "\n") (indent-according-to-mode))))
 
 (defun besi-insert-match (pre aft)
   (progn

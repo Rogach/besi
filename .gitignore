@@ -2,5 +2,6 @@ target/
 .bzr/
 .bzrignore
 scala-mode*
+matlab*
 besi-notes.txt
 textindent.el

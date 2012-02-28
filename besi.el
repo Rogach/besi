@@ -78,10 +78,21 @@
   (interactive)
   (progn  
     (if 
-      (save-excursion
-        (forward-comment -100000)
-        (skip-syntax-backward "-w_.")
-        (/= (point) 1))
+      (and
+        (save-excursion
+          (forward-comment -100000)
+          (skip-syntax-backward "-w_.")
+          (/= (point) 1))
+        (if
+          (/=
+            (line-number-at-pos)
+            (save-excursion
+              (forward-comment 100000)
+              (line-number-at-pos)))
+          t
+          (save-excursion
+            (forward-comment 100000)
+            (>= (point)  (buffer-size)))))
       (let (
             (next-indent
              (save-excursion

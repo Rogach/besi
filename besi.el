@@ -3,12 +3,14 @@
 (defun besi-indent-line ()
   "Indent current line"
   (interactive)
-  (indent-line-to 
-    (if (or 
-          (eq last-command 'besi-indent-line)
-          (eq last-command 'indent-for-tab-command))
-      (+ 2 (current-indentation))
-      (besi-indent)))
+  (if (> (point) (line-beginning-position))
+    (insert "  ")
+    (indent-line-to 
+      (if (or 
+            (eq last-command 'besi-indent-line)
+            (eq last-command 'indent-for-tab-command))
+        (+ 2 (current-indentation))
+        (besi-indent))))
   (setq last-command 'besi-indent-line)
 )
 

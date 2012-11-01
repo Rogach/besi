@@ -13,35 +13,41 @@
 )
 
 (defun besi-indent ()
-  (save-excursion
-    (forward-comment -100000)
-    (backward-char 1)
-    (if (or 
-          (looking-at "{")
-          (looking-at "=") 
-          (save-excursion
-            (if (looking-at ">")
-               (progn
-                 (backward-char 1)
-                 (if (looking-at "=")
-                   1
-                   (if (looking-at "/") nil 
-                     (progn 
-                       (back-to-indentation)
-                       (if (looking-at "</")
-                          nil 1))
-                     )))
-               nil))
-          (looking-at "("))
-      (+ (current-indentation) 2)
-      (current-indentation))))
+  (let ((suggested-indent
+         (save-excursion
+           (forward-comment -100000)
+           (backward-char 1)
+           (if (or 
+                 (looking-at "{")
+                 (looking-at "(")
+                 (looking-at "=") 
+                 (save-excursion
+                   (if (looking-at ">")
+                      (progn
+                        (backward-char 1)
+                        (if (looking-at "=")
+                          1
+                          (if (looking-at "/") nil 
+                            (progn 
+                              (back-to-indentation)
+                              (if (looking-at "</")
+                                 nil 1))
+                            )))
+                      nil)))
+             (+ (current-indentation) 2)
+             (current-indentation)))))
+    (save-excursion
+      (back-to-indentation)
+      (if (or (looking-at ")") (looking-at "}"))
+          (- suggested-indent 2)
+          suggested-indent))))
 
 (defun besi-insert-brace (brace)
     (save-excursion
       (newline)
       (insert brace)
       (backward-char 1)
-      (indent-line-to (- (besi-indent) 2))))
+      (indent-line-to (besi-indent) )))
 
 (defun besi-is-char-after (char)
   (save-excursion
